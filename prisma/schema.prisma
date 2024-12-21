@@ -1,0 +1,67 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+// enum institute {
+//     Playhouse
+//     School
+//     College
+//     Competitive_Exam_Center
+// }
+
+// enum board {
+//     GSAB
+//     CBSE
+//     ICSC
+// }
+
+model User {
+    id          Int     @id @default(autoincrement())
+    name        String
+    age         Int
+    instituteId Int?
+    boardId     Int?
+    mediumId    Int?
+    classId     Int?
+    university  String?
+    degreeType  String?
+    examId      Int?
+
+    institute OptionMaster? @relation(name: "institute", fields: [instituteId], references: [id])
+    board     OptionMaster? @relation(name: "board", fields: [boardId], references: [id])
+    medium    OptionMaster? @relation(name: "medium", fields: [mediumId], references: [id])
+    class     OptionMaster? @relation(name: "class", fields: [classId], references: [id])
+    exam      Exams?        @relation(fields: [examId], references: [id])
+}
+
+model SelectMaster {
+    id       Int    @id @default(autoincrement())
+    category String
+
+    options OptionMaster[]
+}
+
+model OptionMaster {
+    id          Int    @id @default(autoincrement())
+    subCategory String
+    selectId    Int
+
+    selectmaster SelectMaster @relation(fields: [selectId], references: [id])
+    User         User[]       @relation(name: "institute")
+    User2        User[]       @relation(name: "board")
+    User3        User[]       @relation(name: "medium")
+    User4        User[]       @relation(name: "class")
+}
+
+model Exams {
+    id          Int    @id @default(autoincrement())
+    name        String
+    description String
+
+    User User[]
+}
